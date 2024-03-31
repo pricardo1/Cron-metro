@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronômetro.PR</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .conteiner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding-top: 3rem;
+            background-image: linear-gradient(rgb(255, 253, 253), black);
+            height: 100vh;
+        }
+
+        .conteiner h1 {
+            color: #172953;
+        }
+
+        .timer {
+            display: flex;
+            font-size: 55px;
+            font-weight: bolder;
+            color: #333;
+        }
+
+        .tempo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 3px;
+            color: #172953;
+            min-width: 90px;
+        }
+
+        .separador {
+            padding: 0 10px;
+            color: #525763;
+        }
+
+        #milisegundos {
+            font-size: 40px;
+            color: #0c0c0c;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            border: 1px solid #CCC;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        #startBtn {
+            background-image: linear-gradient(rgb(255, 253, 253), #172953);
+            color: #fff;
+        }
+
+        #pauseBtn,
+        #resumeBtn {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="conteiner">
+        <h1>Cronômetro.PR</h1>
+        <div class="timer">
+            <div class="tempo" id="minutos">00</div>
+            <div class="separador">:</div>
+            <div class="tempo" id="segundos">00</div>
+            <div class="separador">:</div>
+            <div class="tempo" id="milisegundos">000</div>
+        </div>
+        <div class="botoes">
+            <button class="btn" id="startBtn">Iniciar</button>
+            <button class="btn" id="pauseBtn">Pausar</button>
+            <button class="btn" id="resumeBtn">Continuar</button>
+            <button class="btn" id="resetBtn">Resetar</button>
+        </div>
+    </div>
+    <script>
+        const minutosEl = document.querySelector('#minutos')
+        const segundosEl = document.querySelector('#segundos')
+        const milisegundosEl = document.querySelector('#milisegundos')
+        const startBtn = document.querySelector('#startBtn')
+        const pauseBtn = document.querySelector('#pauseBtn')
+        const resumeBtn = document.querySelector('#resumeBtn')
+        const resetBtn = document.querySelector('#resetBtn')
+
+        let interval;
+        let minutos = 0;
+        let segundos = 0;
+        let milisegundos = 0;
+        let isPaused = false;
+
+        startBtn.addEventListener("click", startTimer);
+        pauseBtn.addEventListener("click", pauseTimer);
+        resumeBtn.addEventListener("click", resumeTimer);
+        resetBtn.addEventListener("click", resetTimer);
+
+        function startTimer() {
+            interval = setInterval(() => {
+                if (!isPaused) {
+                    milisegundos += 10;
+                    if (milisegundos === 1000) {
+                        segundos++;
+                        milisegundos = 0;
+                    }
+
+                    if (segundos === 60) {
+                        minutos++;
+                        segundos = 0;
+                    }
+
+                    minutosEl.textContent = formatTime(minutos);
+                    segundosEl.textContent = formatTime(segundos);
+                    milisegundosEl.textContent = formatMilisegundos(milisegundos);
+                }
+            }, 10);
+
+            startBtn.style.display = "none";
+            pauseBtn.style.display = "block";
+        }
+        function pauseTimer() {
+            isPaused = true;
+            pauseBtn.style.display = "none";
+            resumeBtn.style.display = "block";
+        }
+        function resumeTimer() {
+            isPaused = false;
+            pauseBtn.style.display = "block";
+            resumeBtn.style.display = "none";
+        }
+        function resetTimer() {
+            isPaused = false;
+            clearInterval(interval);
+            minutos = 0;
+            segundos = 0;
+            milisegundos = 0;
+
+            minutosEl.textContent = "00";
+            segundosEl.textContent = "00";
+            milisegundosEl.textContent = "000";
+
+            startBtn.style.display = "block";
+            pauseBtn.style.display = "none";
+            resumeBtn.style.display = "none";
+        }
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+        function formatMilisegundos(time) {
+            return time < 100 ? `${time}`.padStart(3, "0") : time;
+        }
+    </script>
+</body>
+
+</html>
